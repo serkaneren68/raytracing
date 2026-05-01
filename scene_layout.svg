@@ -1,0 +1,111 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="720" viewBox="0 0 1200 720">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#263238"/>
+    </marker>
+    <style>
+      .title{font:700 24px Helvetica,Arial,sans-serif;fill:#17212b}
+      .label{font:14px Helvetica,Arial,sans-serif;fill:#17212b}
+      .small{font:12px Helvetica,Arial,sans-serif;fill:#455a64}
+      .axis{stroke:#cfd8dc;stroke-width:1}
+      .ray{stroke:#263238;stroke-width:2;marker-end:url(#arrow)}
+      .fov{stroke:#607d8b;stroke-width:2;stroke-dasharray:8 6;fill:none}
+      .viewport{stroke:#7b1fa2;stroke-width:4;fill:none}
+      .photo{fill:#1e88e5;fill-opacity:.26;stroke:#1565c0;stroke-width:2}
+      .cyl{fill:#d79a45;fill-opacity:.68;stroke:#8d5d22;stroke-width:2}
+      .ground{stroke:#6d6d6d;stroke-width:3;stroke-dasharray:10 6}
+      .camera{fill:#263238}
+      .lookat{fill:#e91e63}
+    </style>
+  </defs>
+
+  <rect width="1200" height="720" fill="#fbfaf7"/>
+  <text class="title" x="40" y="42">Current Scene Layout</text>
+  <text class="small" x="40" y="66">Camera, viewport/focus plane, metal cylinder, photo quad, and ground from the current main.cc values.</text>
+
+  <!-- Top view panel -->
+  <rect x="40" y="90" width="530" height="560" fill="#ffffff" stroke="#eceff1"/>
+  <text class="title" x="60" y="125">Top View: X-Z</text>
+  <text class="small" x="60" y="146">Looking down from +Y. Camera looks toward negative Z.</text>
+
+  <!-- Top view axes and grid -->
+  <line class="axis" x1="95" y1="530" x2="520" y2="530"/>
+  <line class="axis" x1="305" y1="125" x2="305" y2="620"/>
+  <text class="small" x="525" y="535">+X</text>
+  <text class="small" x="313" y="133">-Z</text>
+  <text class="small" x="313" y="618">+Z</text>
+
+  <!-- Top view photo quad: x [-1.6,1.6], z [-3.1,-0.9] -->
+  <rect class="photo" x="178" y="218" width="254" height="174"/>
+  <text class="label" x="186" y="238">photo quad / image plane</text>
+  <text class="small" x="186" y="256">y = -0.82, z -0.9..-3.1</text>
+
+  <!-- Top view cylinder circle: center (0,-2), r .55 -->
+  <circle class="cyl" cx="305" cy="305" r="44"/>
+  <text class="label" x="330" y="302">metal cylinder</text>
+  <text class="small" x="330" y="320">center (0,0,-2), r .55</text>
+
+  <!-- Top view camera and look target -->
+  <circle class="camera" cx="305" cy="748" r="8" transform="translate(0,-180)"/>
+  <text class="label" x="320" y="573">camera</text>
+  <text class="small" x="320" y="590">lookfrom (0,1,3.6)</text>
+  <circle class="lookat" cx="305" cy="273" r="5"/>
+  <text class="small" x="318" y="278">lookat approx (0,-.35,-2)</text>
+
+  <!-- Top view camera ray -->
+  <line class="ray" x1="305" y1="568" x2="305" y2="286"/>
+  <line class="fov" x1="305" y1="568" x2="47" y2="287"/>
+  <line class="fov" x1="305" y1="568" x2="563" y2="287"/>
+  <line class="viewport" x1="47" y1="287" x2="563" y2="287"/>
+  <text class="label" x="390" y="282">viewport/focus plane width</text>
+
+  <!-- Side view panel -->
+  <rect x="630" y="90" width="530" height="560" fill="#ffffff" stroke="#eceff1"/>
+  <text class="title" x="650" y="125">Side View: Z-Y</text>
+  <text class="small" x="650" y="146">X is hidden. This shows height and depth.</text>
+
+  <!-- Side view axes -->
+  <line class="axis" x1="680" y1="520" x2="1115" y2="520"/>
+  <line class="axis" x1="760" y1="120" x2="760" y2="610"/>
+  <text class="small" x="1120" y="525">+Z</text>
+  <text class="small" x="768" y="128">+Y</text>
+  <text class="small" x="768" y="610">-Y</text>
+
+  <!-- Side view ground y=-0.86 -->
+  <line class="ground" x1="670" y1="516" x2="1130" y2="516"/>
+  <text class="label" x="680" y="505">ground surface y ~= -0.86</text>
+
+  <!-- Side view photo quad: z -0.9..-3.1, y -0.82 -->
+  <rect class="photo" x="718" y="502" width="175" height="12"/>
+  <text class="label" x="730" y="492">photo quad, parallel to cylinder base</text>
+
+  <!-- Side view cylinder: z around -2, y -0.8..0.8 -->
+  <rect class="cyl" x="762" y="246" width="87" height="256" rx="12"/>
+  <ellipse class="cyl" cx="806" cy="246" rx="44" ry="12"/>
+  <ellipse class="cyl" cx="806" cy="502" rx="44" ry="12"/>
+  <text class="label" x="858" y="320">metal cylinder</text>
+  <text class="small" x="858" y="338">height 1.6, y -0.8..0.8</text>
+
+  <!-- Side view camera and look target -->
+  <circle class="camera" cx="1254" cy="214" r="8" transform="translate(-150,0)"/>
+  <text class="label" x="1032" y="205">camera</text>
+  <text class="small" x="965" y="224">(z 3.6, y 1.0)</text>
+  <circle class="lookat" cx="806" cy="440" r="5"/>
+  <text class="small" x="818" y="445">lookat</text>
+
+  <!-- Side ray and fov -->
+  <line class="ray" x1="1104" y1="214" x2="819" y2="434"/>
+  <line class="fov" x1="1104" y1="214" x2="653" y2="206"/>
+  <line class="fov" x1="1104" y1="214" x2="958" y2="475"/>
+  <line class="viewport" x1="653" y1="206" x2="958" y2="475"/>
+  <text class="label" x="880" y="235">tilted viewport/focus plane</text>
+
+  <!-- Legend -->
+  <rect x="40" y="666" width="1120" height="36" fill="#ffffff" stroke="#eceff1"/>
+  <circle class="cyl" cx="62" cy="684" r="8"/><text class="small" x="78" y="689">metal cylinder</text>
+  <rect class="photo" x="205" y="676" width="24" height="14"/><text class="small" x="238" y="689">photo quad</text>
+  <line class="viewport" x1="345" y1="684" x2="383" y2="684"/><text class="small" x="392" y="689">viewport/focus plane</text>
+  <line class="ground" x1="550" y1="684" x2="590" y2="684"/><text class="small" x="600" y="689">ground</text>
+  <circle class="camera" cx="720" cy="684" r="7"/><text class="small" x="734" y="689">camera</text>
+  <circle class="lookat" cx="840" cy="684" r="6"/><text class="small" x="854" y="689">lookat</text>
+</svg>

@@ -8,6 +8,16 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 add_executable(raytracing
     main.cc
-    vec3.h
     color.h
+    hittable.h
+    hittable_list.h
+    ray.h
+    rtweekend.h
+    sphere.h
+    cylinder.h
+    image.h
+    quad.h
+    vec3.h
+    camera.h
+    material.h
 )
