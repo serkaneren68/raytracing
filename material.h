@@ -58,11 +58,29 @@ class image_light : public material {
         image_light(const std::string& filename, double intensity = 1.0)
             : texture(filename), intensity(intensity) {}
 
+        // Magenta (1, 0, 1) marks "no photo here" — let the ray pass through
+        // so the cylinder reflects whatever is actually behind the plane.
+        bool scatter(const ray& r_in, const hit_record& rec, color& attenuation, ray& scattered) const override {
+            color tex = texture.pixel_color(rec.u, rec.v);
+            if (is_transparent(tex)) {
+                scattered = ray(rec.p, r_in.direction());
+                attenuation = color(1, 1, 1);
+                return true;
+            }
+            return false;
+        }
+
         color emitted(double u, double v, const point3& p) const override {
-            return intensity * texture.pixel_color(u, v);
+            color tex = texture.pixel_color(u, v);
+            if (is_transparent(tex)) return color(0, 0, 0);
+            return intensity * tex;
         }
 
     private:
+        static bool is_transparent(const color& c) {
+            return c.x() > 0.95 && c.y() < 0.05 && c.z() > 0.95;
+        }
+
         image texture;
         double intensity;
 };
