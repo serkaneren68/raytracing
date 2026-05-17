@@ -1,0 +1,7 @@
+serkan@Serkan-Mac-mini raytracing % RT_TARGET_IMAGE=input.ppm \
+RT_IMAGE_WIDTH=1920 \
+RT_SAMPLES=32 \
+RT_MAX_DEPTH=32 \
+RT_TEXTURE_WIDTH=1000 \
+RT_TEXTURE_HEIGHT=1600 \
+./build/raytracing > render.ppm
