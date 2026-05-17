@@ -1,6 +1,7 @@
 #ifndef QUAD_H
 #define QUAD_H
 
+#include "aabb.h"
 #include "hittable.h"
 
 class quad : public hittable {
@@ -37,6 +38,14 @@ class quad : public hittable {
             rec.v = beta;
             rec.mat = mat;
             rec.set_face_normal(r, normal);
+            return true;
+        }
+
+        bool bounding_box(aabb& output_box) const override {
+            auto q2 = q + u;
+            auto q3 = q + v;
+            auto q4 = q + u + v;
+            output_box = surrounding_box(surrounding_points(q, q2, q3), aabb(q4, q4));
             return true;
         }
 

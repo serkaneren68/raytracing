@@ -815,5 +815,9 @@ CMakeFiles/raytracing.dir/main.cc.o: /Users/serkan/raytracing/main.cc \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__filesystem/recursive_directory_iterator.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__filesystem/u8path.h \
   /Users/serkan/raytracing/hittable_list.h \
-  /Users/serkan/raytracing/sphere.h /Users/serkan/raytracing/cylinder.h \
-  /Users/serkan/raytracing/quad.h
+  /Users/serkan/raytracing/aabb.h /Users/serkan/raytracing/sphere.h \
+  /Users/serkan/raytracing/bvh.h /Users/serkan/raytracing/cylinder.h \
+  /Users/serkan/raytracing/inverse_mapping.h \
+  /Users/serkan/raytracing/quad.h \
+  /Users/serkan/raytracing/scene_config.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/sstream

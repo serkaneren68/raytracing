@@ -1,6 +1,7 @@
 #ifndef CYLINDER_H
 #define CYLINDER_H
 
+#include "aabb.h"
 #include "hittable.h"
 
 class cylinder : public hittable {
@@ -97,6 +98,15 @@ class cylinder : public hittable {
 
             rec.set_face_normal(r, outward_normal);
             rec.mat = mat;
+            return true;
+        }
+
+        bool bounding_box(aabb& output_box) const override {
+            auto x_extent = half_height * std::fabs(axis.x()) + radius * std::sqrt(1 - axis.x() * axis.x());
+            auto y_extent = half_height * std::fabs(axis.y()) + radius * std::sqrt(1 - axis.y() * axis.y());
+            auto z_extent = half_height * std::fabs(axis.z()) + radius * std::sqrt(1 - axis.z() * axis.z());
+            auto extent = vec3(x_extent, y_extent, z_extent);
+            output_box = aabb(center - extent, center + extent);
             return true;
         }
 

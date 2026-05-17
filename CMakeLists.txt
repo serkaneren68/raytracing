@@ -13,11 +13,17 @@ add_executable(raytracing
     hittable_list.h
     ray.h
     rtweekend.h
+    aabb.h
+    bvh.h
+    inverse_mapping.h
     sphere.h
     cylinder.h
+    triangle.h
+    normal_triangle_mesh.h
     image.h
     quad.h
     vec3.h
     camera.h
     material.h
+    scene_config.h
 )

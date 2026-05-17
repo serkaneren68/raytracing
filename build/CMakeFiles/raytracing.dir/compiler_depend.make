@@ -642,6 +642,7 @@ CMakeFiles/raytracing.dir/main.cc.o: /Users/serkan/raytracing/main.cc \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/print \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/queue \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/ratio \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/sstream \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/stack \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/stddef.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/stdexcept \
@@ -812,6 +813,8 @@ CMakeFiles/raytracing.dir/main.cc.o: /Users/serkan/raytracing/main.cc \
   /Library/Developer/CommandLineTools/usr/lib/clang/17/include/stdarg.h \
   /Library/Developer/CommandLineTools/usr/lib/clang/17/include/stddef.h \
   /Library/Developer/CommandLineTools/usr/lib/clang/17/include/stdint.h \
+  /Users/serkan/raytracing/aabb.h \
+  /Users/serkan/raytracing/bvh.h \
   /Users/serkan/raytracing/camera.h \
   /Users/serkan/raytracing/color.h \
   /Users/serkan/raytracing/cylinder.h \
@@ -819,17 +822,23 @@ CMakeFiles/raytracing.dir/main.cc.o: /Users/serkan/raytracing/main.cc \
   /Users/serkan/raytracing/hittable_list.h \
   /Users/serkan/raytracing/image.h \
   /Users/serkan/raytracing/interval.h \
+  /Users/serkan/raytracing/inverse_mapping.h \
   /Users/serkan/raytracing/material.h \
   /Users/serkan/raytracing/quad.h \
   /Users/serkan/raytracing/ray.h \
   /Users/serkan/raytracing/rtweekend.h \
+  /Users/serkan/raytracing/scene_config.h \
   /Users/serkan/raytracing/sphere.h \
   /Users/serkan/raytracing/vec3.h
 
 
+/Users/serkan/raytracing/scene_config.h:
+
 /Users/serkan/raytracing/rtweekend.h:
 
 /Users/serkan/raytracing/material.h:
+
+/Users/serkan/raytracing/inverse_mapping.h:
 
 /Users/serkan/raytracing/interval.h:
 
@@ -840,6 +849,10 @@ CMakeFiles/raytracing.dir/main.cc.o: /Users/serkan/raytracing/main.cc \
 /Users/serkan/raytracing/cylinder.h:
 
 /Users/serkan/raytracing/camera.h:
+
+/Users/serkan/raytracing/bvh.h:
+
+/Users/serkan/raytracing/aabb.h:
 
 /Library/Developer/CommandLineTools/usr/lib/clang/17/include/stddef.h:
 
@@ -1626,6 +1639,8 @@ CMakeFiles/raytracing.dir/main.cc.o: /Users/serkan/raytracing/main.cc \
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__math/remainder.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__filesystem/directory_options.h:
+
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/sstream:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__filesystem/file_time_type.h:
 

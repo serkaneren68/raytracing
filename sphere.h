@@ -1,6 +1,7 @@
 #ifndef SPHERE_H
 #define SPHERE_H
 
+#include "aabb.h"
 #include "hittable.h"
 
 class sphere : public hittable {
@@ -32,6 +33,12 @@ class sphere : public hittable {
             vec3 outward_normal = (rec.p - center) / radius ;
             rec.set_face_normal(r, outward_normal);
             rec.mat = mat;
+            return true;
+        }
+
+        bool bounding_box(aabb& output_box) const override {
+            auto rvec = vec3(radius, radius, radius);
+            output_box = aabb(center - rvec, center + rvec);
             return true;
         }
 
