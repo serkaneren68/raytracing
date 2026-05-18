@@ -7,23 +7,12 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 add_executable(raytracing
-    main.cc
-    color.h
-    hittable.h
-    hittable_list.h
-    ray.h
-    rtweekend.h
-    aabb.h
-    bvh.h
-    inverse_mapping.h
-    sphere.h
-    cylinder.h
-    triangle.h
-    normal_triangle_mesh.h
-    image.h
-    quad.h
-    vec3.h
-    camera.h
-    material.h
-    scene_config.h
+    src/main.cc
+    src/app.cc
+    src/app.h
+)
+
+target_include_directories(raytracing PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/raytracing
+    ${CMAKE_CURRENT_SOURCE_DIR}/src
 )

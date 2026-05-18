@@ -1,0 +1,10 @@
+build/
+
+generated/*
+!generated/.gitkeep
+
+outputs/*
+!outputs/.gitkeep
+
+*.ppm
+*.log
