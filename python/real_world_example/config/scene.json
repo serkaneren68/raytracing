@@ -1,0 +1,42 @@
+{
+  "scene_name": "real_world_example",
+  "units": "mm",
+  "tablet": {
+    "width_mm": 310.0,
+    "height_mm": 180.0,
+    "frame_definition": {
+      "origin": "screen_center",
+      "x_axis": "right",
+      "y_axis": "up",
+      "z_axis": "toward_camera_side_of_screen_normal"
+    }
+  },
+  "calibration_inputs": {
+    "intrinsics_file": "python/calibration/output/intrinsics.json",
+    "reference_pose_file": "python/calibration/output/reference_pose.json",
+    "tablet_reference_file": "python/calibration/config/tablet_screen_reference.json"
+  },
+  "board_frame_notes": {
+    "origin": "charuco_board_origin_from_reference_pose_overlay",
+    "x_axis": "right",
+    "y_axis": "down",
+    "z_axis": "board_plane_normal",
+    "drawn_overlay_axes": {
+      "red": "+X",
+      "green": "+Y",
+      "blue": "-Z"
+    }
+  },
+  "cezve": {
+    "shape": "frustum",
+    "height_mm": 90.0,
+    "bottom_diameter_mm": 65.0,
+    "top_diameter_mm": 75.0,
+    "axis": "tablet_plane_normal",
+    "base_center_in_tablet_mm": {
+      "x_mm": null,
+      "y_mm": null
+    },
+    "notes": "Fill x_mm and y_mm after measuring the cezve base center relative to the tablet screen center."
+  }
+}
