@@ -2,25 +2,25 @@
   "scene_name": "real_world_example",
   "units": "mm",
   "tablet": {
-    "width_mm": 310.0,
-    "height_mm": 180.0,
+    "width_mm": 180.0,
+    "height_mm": 310.0,
     "frame_definition": {
       "origin": "screen_top_right_corner",
-      "x_axis": "left",
+      "x_axis": "left_along_short_edge",
       "y_axis": "down",
       "z_axis": "toward_camera_side_of_screen_normal",
-      "axes_note": "X and Y match the board frame; +Z is flipped relative to board so that the camera lies at positive z (board +Z points into the screen, tablet +Z points toward camera).",
+      "axes_note": "X and Y match the board frame; +Z is flipped relative to board so that the camera lies at positive z. The short screen edge is the X span and the long screen edge is the Y span.",
       "valid_ranges": {
-        "x_mm": [-310.0, 0.0],
-        "y_mm": [0.0, 180.0]
+        "x_mm": [-180.0, 0.0],
+        "y_mm": [0.0, 310.0]
       },
       "reference_points": {
         "top_right_corner": [0.0, 0.0],
-        "top_left_corner": [-310.0, 0.0],
-        "bottom_right_corner": [0.0, 180.0],
-        "bottom_left_corner": [-310.0, 180.0],
-        "top_edge_midpoint": [-155.0, 0.0],
-        "screen_center": [-155.0, 90.0]
+        "top_left_corner": [-180.0, 0.0],
+        "bottom_right_corner": [0.0, 310.0],
+        "bottom_left_corner": [-180.0, 310.0],
+        "top_edge_midpoint": [-90.0, 0.0],
+        "screen_center": [-90.0, 155.0]
       }
     }
   },
@@ -50,6 +50,6 @@
       "x_mm": -70.0,
       "y_mm": 90.0
     },
-    "notes": "Tablet frame: origin = screen top-right corner, +x toward the right (off-screen), +y toward the bottom edge. Visible screen points lie in x in [-310, 0] and y in [0, 180]."
+    "notes": "Tablet frame: origin = screen top-right corner, x runs across the short 180 mm edge, y runs down the long 310 mm edge. Visible screen points lie in x in [-180, 0] and y in [0, 310]."
   }
 }

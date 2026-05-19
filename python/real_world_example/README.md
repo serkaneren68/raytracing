@@ -34,16 +34,18 @@ It collects:
 - +y: toward the **bottom** edge of the screen
 - +z: screen normal, pointing toward the camera side
 
-Valid ranges for points on the screen: `x_mm in [-310, 0]`, `y_mm in [0, 180]`.
+For the real setup, the short screen edge is treated as the `x` span and the long screen edge as the `y` span.
+
+Valid ranges for points on the screen: `x_mm in [-180, 0]`, `y_mm in [0, 310]`.
 
 Reference points:
 
 - top-right corner: `(0, 0)`
-- top-left corner: `(-310, 0)`
-- bottom-right corner: `(0, 180)`
-- bottom-left corner: `(-310, 180)`
-- top-edge midpoint: `(-155, 0)`
-- screen center: `(-155, 90)`
+- top-left corner: `(-180, 0)`
+- bottom-right corner: `(0, 310)`
+- bottom-left corner: `(-180, 310)`
+- top-edge midpoint: `(-90, 0)`
+- screen center: `(-90, 155)`
 
 ## Next step
 
