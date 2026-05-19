@@ -195,6 +195,12 @@ bool add_photo_plane_if_needed(
             scene.target_rect_offset_x,
             scene.target_rect_offset_y,
             scene.photo_plane_solid_empty_background,
+            scene.draw_cezve_footprint,
+            scene.frustum_base_center,
+            scene.frustum_bottom_radius,
+            plane_fit.q,
+            plane_fit.u,
+            plane_fit.v,
             print_info_file
         );
     } else {

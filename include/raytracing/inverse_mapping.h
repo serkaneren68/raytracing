@@ -425,6 +425,45 @@ inline void fill_empty_pixels(
     (void)empty_color;
 }
 
+inline void draw_dashed_ellipse(
+    std::vector<color>& pixels,
+    int width,
+    int height,
+    double cx,
+    double cy,
+    double rx,
+    double ry,
+    const color& line_color,
+    int line_thickness = 2,
+    int dash_segments  = 32,
+    double duty_cycle  = 0.55
+) {
+    if (rx <= 0.0 || ry <= 0.0 || dash_segments <= 0) return;
+    const int samples_per_segment = 32;
+    const int total_samples = dash_segments * samples_per_segment;
+    const int filled_samples = int(samples_per_segment * duty_cycle);
+
+    for (int s = 0; s < total_samples; ++s) {
+        int seg_idx = s / samples_per_segment;
+        int within  = s - seg_idx * samples_per_segment;
+        if (within >= filled_samples) continue;
+
+        double theta = (2.0 * pi * s) / total_samples;
+        double px = cx + rx * std::cos(theta);
+        double py = cy + ry * std::sin(theta);
+
+        for (int dy = -line_thickness; dy <= line_thickness; ++dy) {
+            for (int dx = -line_thickness; dx <= line_thickness; ++dx) {
+                if (dx*dx + dy*dy > line_thickness*line_thickness) continue;
+                int x = int(px) + dx;
+                int y = int(py) + dy;
+                if (x < 0 || x >= width || y < 0 || y >= height) continue;
+                pixels[y * width + x] = line_color;
+            }
+        }
+    }
+}
+
 inline void generate_inverse_mapped_photo_texture(
     const camera& cam,
     const hittable& reflective_object,
@@ -438,6 +477,12 @@ inline void generate_inverse_mapped_photo_texture(
     double target_offset_x = 0.0,
     double target_offset_y = 0.0,
     bool solid_empty_background = false,
+    bool draw_footprint = false,
+    const point3& footprint_center = point3(0, 0, 0),
+    double footprint_radius = 0.0,
+    const point3& plane_q = point3(0, 0, 0),
+    const vec3&   plane_u = vec3(1, 0, 0),
+    const vec3&   plane_v = vec3(0, 1, 0),
     const std::string& print_info_filename = "generated/photo_print_info.txt"
 ) {
     image target_image(target_filename);
@@ -531,6 +576,23 @@ inline void generate_inverse_mapped_photo_texture(
         for (size_t idx = 0; idx < pixels.size(); ++idx)
             if (originally_empty[idx])
                 pixels[idx] = empty_bg;
+    }
+
+    if (draw_footprint && footprint_radius > 0.0) {
+        auto u_len_sq = plane_u.length_squared();
+        auto v_len_sq = plane_v.length_squared();
+        auto delta = footprint_center - plane_q;
+        auto u_norm = dot(delta, plane_u) / u_len_sq;
+        auto v_norm = dot(delta, plane_v) / v_len_sq;
+        auto cx_px  = u_norm * texture_width;
+        auto cy_px  = (1.0 - v_norm) * texture_height;
+        auto rx_px  = footprint_radius / std::sqrt(u_len_sq) * texture_width;
+        auto ry_px  = footprint_radius / std::sqrt(v_len_sq) * texture_height;
+        draw_dashed_ellipse(pixels, texture_width, texture_height,
+                            cx_px, cy_px, rx_px, ry_px, color(0, 0, 0));
+        std::clog << "Drew cezve footprint at texture (" << int(cx_px) << ", "
+                  << int(cy_px) << ") with radii (" << int(rx_px) << ", "
+                  << int(ry_px) << ") px.\n";
     }
 
     write_ppm_p3(output_filename, pixels, texture_width, texture_height);

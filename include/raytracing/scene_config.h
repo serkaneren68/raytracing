@@ -83,6 +83,11 @@ struct scene_config {
     // solid magenta (1, 0, 1) instead of being feathered from neighbours, so
     // the tablet area outside the mapped image is clearly visible.
     bool photo_plane_solid_empty_background = false;
+
+    // When true, the inverse-mapped texture is overlayed with a dashed
+    // ellipse showing the reflective object's base footprint, so the user
+    // knows where to physically place the cezve on the displayed texture.
+    bool draw_cezve_footprint = false;
 };
 
 inline std::string strip(const std::string& s) {
@@ -234,6 +239,8 @@ inline scene_config load_scene_config(const std::string& path) {
                 bool b; if (parse_bool(value, b)) cfg.anamorphic_enabled = b;
             } else if (key == "photo_plane_solid_empty_background") {
                 bool b; if (parse_bool(value, b)) cfg.photo_plane_solid_empty_background = b;
+            } else if (key == "draw_cezve_footprint") {
+                bool b; if (parse_bool(value, b)) cfg.draw_cezve_footprint = b;
             } else if (key == "target_rect_width_ratio") {
                 cfg.target_rect_width_ratio = std::stod(value);
             } else if (key == "target_rect_height_ratio") {
