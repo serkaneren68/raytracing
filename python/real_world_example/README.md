@@ -63,3 +63,19 @@ python3 python/real_world_example/scripts/forward_reflection_map.py \
 ```
 
 Outputs are written to `python/real_world_example/output/`.
+
+## Inverse Mapping
+
+Generate the distorted tablet image from a desired camera-view target:
+
+```bash
+python3 python/real_world_example/scripts/generate_tablet_texture.py \
+  --scene python/real_world_example/config/scene.json \
+  --target-image assets/images/yg.png
+```
+
+This writes:
+
+- `tablet_texture.png`: image to display on the tablet
+- `tablet_texture_camera_preview.png`: sampled camera-space preview
+- `tablet_texture_summary.json`: sampling summary
