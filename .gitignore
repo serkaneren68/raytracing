@@ -14,6 +14,8 @@ python/calibration/captures/pose/*
 !python/calibration/captures/pose/.gitkeep
 python/calibration/output/*
 !python/calibration/output/.gitkeep
+python/real_world_example/output/*
+!python/real_world_example/output/.gitkeep
 
 *.ppm
 *.log

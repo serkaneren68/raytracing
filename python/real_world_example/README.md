@@ -30,3 +30,14 @@ It collects:
 ## Next step
 
 Update `cezve_base_center_in_tablet_mm` once the real tablet position is known, then build the forward reflection map on top of this scene file.
+
+## Forward Reflection Map
+
+Once the cezve base center is filled in, generate the first geometric reflection map with:
+
+```bash
+python3 python/real_world_example/scripts/forward_reflection_map.py \
+  --scene python/real_world_example/config/scene.json
+```
+
+Outputs are written to `python/real_world_example/output/`.
