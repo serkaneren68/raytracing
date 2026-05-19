@@ -12,6 +12,8 @@ Calibration is already available from:
 - `python/calibration/output/reference_pose.json`
 - `python/calibration/config/tablet_screen_reference.json`
 
+The current tablet reference measurement is interpreted as the tablet `bottom_right` corner in board coordinates.
+
 ## Scene file
 
 The main scene definition is:

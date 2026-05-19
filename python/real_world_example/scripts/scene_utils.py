@@ -29,7 +29,8 @@ class CalibrationBundle:
     camera_origin_tablet_mm: np.ndarray
     rotation_board_to_camera: np.ndarray
     translation_board_to_camera_mm: np.ndarray
-    tablet_top_right_in_board_mm: np.ndarray
+    tablet_anchor_name: str
+    tablet_anchor_in_board_mm: np.ndarray
 
 
 def load_json(path: str | Path) -> dict:
@@ -85,10 +86,11 @@ def load_scene(scene_path: str | Path) -> tuple[dict, TabletSpec, FrustumSpec, C
     tvec = np.array(pose["tvec_mm"], dtype=np.float64).reshape(3, 1)
     rotation_board_to_camera, _ = cv2.Rodrigues(rvec)
 
-    tablet_top_right_in_board_mm = np.array(
+    tablet_anchor_name = tablet_ref["board_to_tablet_reference"].get("tablet_anchor_corner", "top_right")
+    tablet_anchor_in_board_mm = np.array(
         [
-            tablet_ref["board_to_tablet_reference"]["tablet_top_right_in_board_frame"]["x_mm"],
-            tablet_ref["board_to_tablet_reference"]["tablet_top_right_in_board_frame"]["y_mm"],
+            tablet_ref["board_to_tablet_reference"]["tablet_anchor_in_board_frame"]["x_mm"],
+            tablet_ref["board_to_tablet_reference"]["tablet_anchor_in_board_frame"]["y_mm"],
             0.0,
         ],
         dtype=np.float64,
@@ -98,7 +100,8 @@ def load_scene(scene_path: str | Path) -> tuple[dict, TabletSpec, FrustumSpec, C
     camera_origin_tablet = board_point_to_tablet(
         camera_origin_board,
         tablet,
-        tablet_top_right_in_board_mm,
+        tablet_anchor_name,
+        tablet_anchor_in_board_mm,
     )
 
     calibration = CalibrationBundle(
@@ -109,15 +112,30 @@ def load_scene(scene_path: str | Path) -> tuple[dict, TabletSpec, FrustumSpec, C
         camera_origin_tablet_mm=camera_origin_tablet,
         rotation_board_to_camera=rotation_board_to_camera,
         translation_board_to_camera_mm=tvec.reshape(3),
-        tablet_top_right_in_board_mm=tablet_top_right_in_board_mm,
+        tablet_anchor_name=tablet_anchor_name,
+        tablet_anchor_in_board_mm=tablet_anchor_in_board_mm,
     )
     return scene, tablet, frustum, calibration
 
 
-def board_point_to_tablet(point_board: np.ndarray, tablet: TabletSpec, top_right_board: np.ndarray) -> np.ndarray:
+def board_point_to_tablet(
+    point_board: np.ndarray,
+    tablet: TabletSpec,
+    anchor_name: str,
+    anchor_in_board: np.ndarray,
+) -> np.ndarray:
     x_board, y_board, z_board = point_board
-    x_tablet = x_board - top_right_board[0]
-    y_tablet = y_board - top_right_board[1]
+    anchor_offsets = {
+        "top_right": np.array([0.0, 0.0, 0.0], dtype=np.float64),
+        "top_left": np.array([-tablet.width_mm, 0.0, 0.0], dtype=np.float64),
+        "bottom_right": np.array([0.0, tablet.height_mm, 0.0], dtype=np.float64),
+        "bottom_left": np.array([-tablet.width_mm, tablet.height_mm, 0.0], dtype=np.float64),
+    }
+    if anchor_name not in anchor_offsets:
+        raise RuntimeError(f"Unsupported tablet anchor corner: {anchor_name}")
+    anchor_offset = anchor_offsets[anchor_name]
+    x_tablet = x_board - anchor_in_board[0] + anchor_offset[0]
+    y_tablet = y_board - anchor_in_board[1] + anchor_offset[1]
     z_tablet = -z_board
     return np.array([x_tablet, y_tablet, z_tablet], dtype=np.float64)
 
