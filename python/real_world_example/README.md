@@ -27,9 +27,27 @@ It collects:
 - cezve frustum dimensions
 - cezve placement on the tablet
 
+## Tablet frame convention
+
+- origin: tablet screen **top-right corner**
+- +x: toward the **right**, so visible screen points have negative `x`
+- +y: toward the **bottom** edge of the screen
+- +z: screen normal, pointing toward the camera side
+
+Valid ranges for points on the screen: `x_mm in [-310, 0]`, `y_mm in [0, 180]`.
+
+Reference points:
+
+- top-right corner: `(0, 0)`
+- top-left corner: `(-310, 0)`
+- bottom-right corner: `(0, 180)`
+- bottom-left corner: `(-310, 180)`
+- top-edge midpoint: `(-155, 0)`
+- screen center: `(-155, 90)`
+
 ## Next step
 
-Update `cezve_base_center_in_tablet_mm` once the real tablet position is known, then build the forward reflection map on top of this scene file.
+Update `cezve.base_center_in_tablet_mm` using the convention above, then build the forward reflection map on top of this scene file.
 
 ## Forward Reflection Map
 

@@ -95,7 +95,9 @@ def intersect_tablet_plane(ray_origin: np.ndarray, ray_dir: np.ndarray, tablet: 
     if t <= 1e-6:
         return None
     hit = ray_origin + t * ray_dir
-    if abs(hit[0]) > tablet.width_mm * 0.5 or abs(hit[1]) > tablet.height_mm * 0.5:
+    if hit[0] < -tablet.width_mm or hit[0] > 0.0:
+        return None
+    if hit[1] < 0.0 or hit[1] > tablet.height_mm:
         return None
     return hit
 
@@ -103,8 +105,8 @@ def intersect_tablet_plane(ray_origin: np.ndarray, ray_dir: np.ndarray, tablet: 
 def tablet_to_canvas(point: np.ndarray, tablet: TabletSpec, pixels_per_mm: float) -> tuple[int, int]:
     width_px = int(round(tablet.width_mm * pixels_per_mm))
     height_px = int(round(tablet.height_mm * pixels_per_mm))
-    x_px = int(round((point[0] + tablet.width_mm * 0.5) * pixels_per_mm))
-    y_px = int(round((tablet.height_mm * 0.5 - point[1]) * pixels_per_mm))
+    x_px = int(round((tablet.width_mm + point[0]) * pixels_per_mm))
+    y_px = int(round(point[1] * pixels_per_mm))
     x_px = max(0, min(width_px - 1, x_px))
     y_px = max(0, min(height_px - 1, y_px))
     return x_px, y_px

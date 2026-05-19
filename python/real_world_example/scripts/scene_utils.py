@@ -116,15 +116,15 @@ def load_scene(scene_path: str | Path) -> tuple[dict, TabletSpec, FrustumSpec, C
 
 def board_point_to_tablet(point_board: np.ndarray, tablet: TabletSpec, top_right_board: np.ndarray) -> np.ndarray:
     x_board, y_board, z_board = point_board
-    x_tablet = x_board - top_right_board[0] + tablet.width_mm * 0.5
-    y_tablet = -(y_board - top_right_board[1]) + tablet.height_mm * 0.5
+    x_tablet = x_board - top_right_board[0]
+    y_tablet = y_board - top_right_board[1]
     z_tablet = -z_board
     return np.array([x_tablet, y_tablet, z_tablet], dtype=np.float64)
 
 
 def board_direction_to_tablet(direction_board: np.ndarray) -> np.ndarray:
     return np.array(
-        [direction_board[0], -direction_board[1], -direction_board[2]],
+        [direction_board[0], direction_board[1], -direction_board[2]],
         dtype=np.float64,
     )
 
