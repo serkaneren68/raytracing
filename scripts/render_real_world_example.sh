@@ -2,7 +2,7 @@
 set -eu
 
 quality="${1:-preview}"
-target_png="${2:-assets/images/yg.png}"
+target_png="${2:-assets/images/yg5.png}"
 
 case "$quality" in
   preview)
