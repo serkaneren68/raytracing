@@ -1,0 +1,15 @@
+{
+  "tablet": {
+    "width_mm": 310.0,
+    "height_mm": 180.0
+  },
+  "board_to_tablet_reference": {
+    "description": "Tablet screen top-right corner expressed in the ChArUco board frame.",
+    "units": "mm",
+    "board_axes_note": "+X right, +Y down, Z=0 on board plane",
+    "tablet_top_right_in_board_frame": {
+      "x_mm": -47.0,
+      "y_mm": -23.0
+    }
+  }
+}
