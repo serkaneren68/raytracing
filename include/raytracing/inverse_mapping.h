@@ -159,13 +159,19 @@ inline void write_ppm_p3(
     }
 }
 
-inline target_rect centered_rect_inside(const target_rect& bounds, double width_ratio, double height_ratio) {
+inline target_rect centered_rect_inside(
+    const target_rect& bounds,
+    double width_ratio,
+    double height_ratio,
+    double offset_x = 0.0,
+    double offset_y = 0.0
+) {
     auto bounds_w = bounds.x1 - bounds.x0;
     auto bounds_h = bounds.y1 - bounds.y0;
     auto rect_w = std::max(1, int(bounds_w * width_ratio));
     auto rect_h = std::max(1, int(bounds_h * height_ratio));
-    auto cx = (bounds.x0 + bounds.x1) / 2;
-    auto cy = (bounds.y0 + bounds.y1) / 2;
+    auto cx = (bounds.x0 + bounds.x1) / 2 + int(bounds_w * offset_x);
+    auto cy = (bounds.y0 + bounds.y1) / 2 + int(bounds_h * offset_y);
 
     return target_rect{
         cx - rect_w / 2,
@@ -429,6 +435,9 @@ inline void generate_inverse_mapped_photo_texture(
     int texture_height,
     double target_width_ratio = 0.72,
     double target_height_ratio = 0.72,
+    double target_offset_x = 0.0,
+    double target_offset_y = 0.0,
+    bool solid_empty_background = false,
     const std::string& print_info_filename = "generated/photo_print_info.txt"
 ) {
     image target_image(target_filename);
@@ -456,7 +465,7 @@ inline void generate_inverse_mapped_photo_texture(
               << ", h=" << effective_height_ratio
               << " (image " << target_image.width() << "x" << target_image.height() << ").\n";
 
-    auto target = centered_rect_inside(object_bounds, target_width_ratio, effective_height_ratio);
+    auto target = centered_rect_inside(object_bounds, target_width_ratio, effective_height_ratio, target_offset_x, target_offset_y);
     auto region = trace_photo_texture_region(cam, reflective_object, photo_plane, target);
     std::vector<color> pixels(texture_width * texture_height, color(1, 0, 1));
     std::vector<int> counts(texture_width * texture_height, 0);
@@ -508,7 +517,21 @@ inline void generate_inverse_mapped_photo_texture(
             pixels[idx] /= counts[idx];
     }
 
+    std::vector<char> originally_empty;
+    if (solid_empty_background) {
+        originally_empty.resize(pixels.size());
+        for (size_t idx = 0; idx < pixels.size(); ++idx)
+            originally_empty[idx] = counts[idx] == 0 ? 1 : 0;
+    }
+
     fill_empty_pixels(pixels, counts, texture_width, texture_height, 3);
+
+    if (solid_empty_background) {
+        const color empty_bg(0.6, 0.0, 0.8);
+        for (size_t idx = 0; idx < pixels.size(); ++idx)
+            if (originally_empty[idx])
+                pixels[idx] = empty_bg;
+    }
 
     write_ppm_p3(output_filename, pixels, texture_width, texture_height);
     write_print_info(print_info_filename, region, photo_plane);

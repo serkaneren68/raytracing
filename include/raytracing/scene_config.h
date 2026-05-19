@@ -22,11 +22,17 @@ struct scene_config {
 
     // Geometry
     double table_y         = 0.0;
+    bool   ground_enabled  = true;
     std::string reflective_object_type = "cylinder";
     point3 cylinder_center = point3(0.0, 0.075, 0.0);
     double cylinder_radius = 0.035;
     double cylinder_height = 0.15;
     vec3   cylinder_axis   = vec3(0, 1, 0);
+    point3 frustum_base_center = point3(0.0, 0.0, 0.0);
+    double frustum_bottom_radius = 0.0325;
+    double frustum_top_radius = 0.0375;
+    double frustum_height = 0.09;
+    vec3   frustum_axis = vec3(0, 0, 1);
     std::string mesh_file  = "assets/models/utah_teapot_surface_22885.norm";
     point3 mesh_center     = point3(0.0, 0.075, 0.0);
     double mesh_height     = 0.15;
@@ -50,6 +56,10 @@ struct scene_config {
     // Photo plane fitting
     double photo_plane_margin = 0.02;
     double photo_plane_trim_fraction = 0.02;
+    bool   explicit_photo_plane_enabled = false;
+    point3 photo_plane_q = point3(0.0, 0.0, 0.0);
+    vec3   photo_plane_u = vec3(0.31, 0.0, 0.0);
+    vec3   photo_plane_v = vec3(0.0, 0.18, 0.0);
 
     // Horizontal fraction of the cylinder's screen-space bounding rect that
     // gets the anamorphic image. The vertical fraction is derived from the
@@ -58,11 +68,21 @@ struct scene_config {
     // Optional manual override for the vertical fraction. <0 = auto from
     // target image aspect; >=0 = use this value as-is (may distort).
     double target_rect_height_ratio = -1.0;
+    // Offset of the target rect center as a fraction of object bounds size.
+    // x>0 shifts right, y>0 shifts down in camera-image space (i.e. lower on
+    // the reflective object).
+    double target_rect_offset_x = 0.0;
+    double target_rect_offset_y = 0.0;
 
     // Toggle the whole anamorphic photo-plane pipeline (fit + texture + quad).
     // When false, only the geometry (cylinder + optional ball + ground) is
     // rendered with regular ray tracing.
     bool anamorphic_enabled = true;
+
+    // When true, photo-plane pixels that received no reflections are painted
+    // solid magenta (1, 0, 1) instead of being feathered from neighbours, so
+    // the tablet area outside the mapped image is clearly visible.
+    bool photo_plane_solid_empty_background = false;
 };
 
 inline std::string strip(const std::string& s) {
@@ -140,6 +160,8 @@ inline scene_config load_scene_config(const std::string& path) {
 
             } else if (key == "table_y") {
                 cfg.table_y = std::stod(value);
+            } else if (key == "ground_enabled") {
+                bool b; if (parse_bool(value, b)) cfg.ground_enabled = b;
             } else if (key == "reflective_object_type") {
                 cfg.reflective_object_type = lowercase(value);
             } else if (key == "cylinder_center") {
@@ -150,6 +172,16 @@ inline scene_config load_scene_config(const std::string& path) {
                 cfg.cylinder_height = std::stod(value);
             } else if (key == "cylinder_axis") {
                 vec3 v; if (parse_vec3(value, v)) cfg.cylinder_axis = v;
+            } else if (key == "frustum_base_center") {
+                vec3 v; if (parse_vec3(value, v)) cfg.frustum_base_center = v;
+            } else if (key == "frustum_bottom_radius") {
+                cfg.frustum_bottom_radius = std::stod(value);
+            } else if (key == "frustum_top_radius") {
+                cfg.frustum_top_radius = std::stod(value);
+            } else if (key == "frustum_height") {
+                cfg.frustum_height = std::stod(value);
+            } else if (key == "frustum_axis") {
+                vec3 v; if (parse_vec3(value, v)) cfg.frustum_axis = v;
             } else if (key == "mesh_file") {
                 cfg.mesh_file = value;
             } else if (key == "mesh_center") {
@@ -190,12 +222,26 @@ inline scene_config load_scene_config(const std::string& path) {
                 cfg.photo_plane_margin = std::stod(value);
             } else if (key == "photo_plane_trim_fraction") {
                 cfg.photo_plane_trim_fraction = std::stod(value);
+            } else if (key == "explicit_photo_plane_enabled") {
+                bool b; if (parse_bool(value, b)) cfg.explicit_photo_plane_enabled = b;
+            } else if (key == "photo_plane_q") {
+                vec3 v; if (parse_vec3(value, v)) cfg.photo_plane_q = v;
+            } else if (key == "photo_plane_u") {
+                vec3 v; if (parse_vec3(value, v)) cfg.photo_plane_u = v;
+            } else if (key == "photo_plane_v") {
+                vec3 v; if (parse_vec3(value, v)) cfg.photo_plane_v = v;
             } else if (key == "anamorphic_enabled") {
                 bool b; if (parse_bool(value, b)) cfg.anamorphic_enabled = b;
+            } else if (key == "photo_plane_solid_empty_background") {
+                bool b; if (parse_bool(value, b)) cfg.photo_plane_solid_empty_background = b;
             } else if (key == "target_rect_width_ratio") {
                 cfg.target_rect_width_ratio = std::stod(value);
             } else if (key == "target_rect_height_ratio") {
                 cfg.target_rect_height_ratio = std::stod(value);
+            } else if (key == "target_rect_offset_x") {
+                cfg.target_rect_offset_x = std::stod(value);
+            } else if (key == "target_rect_offset_y") {
+                cfg.target_rect_offset_y = std::stod(value);
             } else {
                 std::clog << "Scene config line " << line_no << ": unknown key '" << key << "'.\n";
             }

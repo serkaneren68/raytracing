@@ -4,6 +4,7 @@
 #include "bvh.h"
 #include "camera.h"
 #include "cylinder.h"
+#include "frustum.h"
 #include "hittable.h"
 #include "hittable_list.h"
 #include "inverse_mapping.h"
@@ -111,6 +112,23 @@ shared_ptr<hittable> build_reflective_object(
         return pointcloud;
     }
 
+    if (scene.reflective_object_type == "frustum") {
+        auto frustum_object = make_shared<frustum>(
+            scene.frustum_base_center,
+            scene.frustum_bottom_radius,
+            scene.frustum_top_radius,
+            scene.frustum_height,
+            scene.frustum_axis,
+            reflector_material
+        );
+        std::clog << "Reflective object: frustum at base center ("
+                  << scene.frustum_base_center.x() << ", "
+                  << scene.frustum_base_center.y() << ", "
+                  << scene.frustum_base_center.z() << "), height "
+                  << scene.frustum_height << ".\n";
+        return frustum_object;
+    }
+
     std::clog << "Reflective object: cylinder.\n";
     return make_shared<cylinder>(
         scene.cylinder_center,
@@ -137,22 +155,30 @@ bool add_photo_plane_if_needed(
         return true;
     }
 
-    auto plane_fit = fit_photo_plane_to_reflections(
-        cam,
-        *reflective_object,
-        scene.table_y + 0.001,
-        scene.photo_plane_margin,
-        scene.photo_plane_trim_fraction
-    );
-    if (plane_fit.sample_count == 0) {
-        std::clog << "No reflections hit the table plane; cannot fit a photo plane.\n";
-        return false;
+    photo_plane_fit plane_fit;
+    if (scene.explicit_photo_plane_enabled) {
+        plane_fit.q = scene.photo_plane_q;
+        plane_fit.u = scene.photo_plane_u;
+        plane_fit.v = scene.photo_plane_v;
+        plane_fit.sample_count = -1;
+        std::clog << "Using explicit photo plane from scene config.\n";
+    } else {
+        plane_fit = fit_photo_plane_to_reflections(
+            cam,
+            *reflective_object,
+            scene.table_y + 0.001,
+            scene.photo_plane_margin,
+            scene.photo_plane_trim_fraction
+        );
+        if (plane_fit.sample_count == 0) {
+            std::clog << "No reflections hit the table plane; cannot fit a photo plane.\n";
+            return false;
+        }
+        std::clog
+            << "Fitted photo plane: q=(" << plane_fit.q.x() << ", " << plane_fit.q.z()
+            << "), size=(" << plane_fit.u.x() << " x " << std::fabs(plane_fit.v.z())
+            << ") from " << plane_fit.sample_count << " reflection samples.\n";
     }
-
-    std::clog
-        << "Fitted photo plane: q=(" << plane_fit.q.x() << ", " << plane_fit.q.z()
-        << "), size=(" << plane_fit.u.x() << " x " << std::fabs(plane_fit.v.z())
-        << ") from " << plane_fit.sample_count << " reflection samples.\n";
 
     if (scene.anamorphic_enabled) {
         photo_plane_mapper photo_plane(plane_fit.q, plane_fit.u, plane_fit.v);
@@ -166,6 +192,9 @@ bool add_photo_plane_if_needed(
             env_int("RT_TEXTURE_HEIGHT", 1600),
             scene.target_rect_width_ratio,
             scene.target_rect_height_ratio,
+            scene.target_rect_offset_x,
+            scene.target_rect_offset_y,
+            scene.photo_plane_solid_empty_background,
             print_info_file
         );
     } else {
@@ -197,8 +226,10 @@ int run() {
 
     auto ground_material = make_shared<lambertian>(scene.ground_albedo);
     auto reflector_material = make_shared<metal>(scene.cylinder_albedo, scene.cylinder_fuzz);
-    world_objects.add(make_shared<sphere>(
-        point3(0.0, scene.table_y - 100.0, 0.0), 100.0, ground_material));
+    if (scene.ground_enabled) {
+        world_objects.add(make_shared<sphere>(
+            point3(0.0, scene.table_y - 100.0, 0.0), 100.0, ground_material));
+    }
 
     shared_ptr<hittable> reflective_object;
     try {
