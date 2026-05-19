@@ -10,6 +10,7 @@ from common import (
     detect_charuco,
     detect_chessboard,
     load_images,
+    read_image,
     save_json,
 )
 
@@ -19,10 +20,16 @@ def calibrate_charuco(image_paths: list[Path], spec: BoardSpec):
     all_ids = []
     image_size = None
     board = None
+    unreadable_images = []
 
     for path in image_paths:
-        image = cv2.imread(str(path))
+        try:
+            image = read_image(path)
+        except RuntimeError as e:
+            raise RuntimeError(f"{e} First failing image: {path}") from e
         if image is None:
+            unreadable_images.append(str(path))
+            print(f"Skipping {path}: image could not be decoded")
             continue
         board, charuco_corners, charuco_ids, _, _ = detect_charuco(image, spec)
         if charuco_ids is None or len(charuco_ids) < 6:
@@ -34,6 +41,11 @@ def calibrate_charuco(image_paths: list[Path], spec: BoardSpec):
         print(f"Accepted {path}: {len(charuco_ids)} corners")
 
     if not all_corners or image_size is None or board is None:
+        if unreadable_images and len(unreadable_images) == len(image_paths):
+            raise RuntimeError(
+                "No images could be decoded. If these are HEIC files, install the "
+                "Python dependencies from requirements.txt before rerunning."
+            )
         raise RuntimeError("No valid ChArUco detections found")
 
     retval, camera_matrix, dist_coeffs, rvecs, tvecs = cv2.aruco.calibrateCameraCharuco(
@@ -52,10 +64,16 @@ def calibrate_chessboard(image_paths: list[Path], spec: BoardSpec):
     image_points = []
     image_size = None
     template_points = create_chessboard_object_points(spec)
+    unreadable_images = []
 
     for path in image_paths:
-        image = cv2.imread(str(path))
+        try:
+            image = read_image(path)
+        except RuntimeError as e:
+            raise RuntimeError(f"{e} First failing image: {path}") from e
         if image is None:
+            unreadable_images.append(str(path))
+            print(f"Skipping {path}: image could not be decoded")
             continue
         found, corners = detect_chessboard(image, spec)
         if not found:
@@ -67,6 +85,11 @@ def calibrate_chessboard(image_paths: list[Path], spec: BoardSpec):
         print(f"Accepted {path}: {len(corners)} corners")
 
     if not image_points or image_size is None:
+        if unreadable_images and len(unreadable_images) == len(image_paths):
+            raise RuntimeError(
+                "No images could be decoded. If these are HEIC files, install the "
+                "Python dependencies from requirements.txt before rerunning."
+            )
         raise RuntimeError("No valid chessboard detections found")
 
     retval, camera_matrix, dist_coeffs, rvecs, tvecs = cv2.calibrateCamera(

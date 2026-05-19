@@ -4,6 +4,15 @@ from pathlib import Path
 
 import cv2
 import numpy as np
+from PIL import Image
+
+try:
+    from pillow_heif import register_heif_opener
+except ImportError:
+    register_heif_opener = None
+
+if register_heif_opener is not None:
+    register_heif_opener()
 
 
 @dataclass
@@ -20,10 +29,34 @@ def ensure_parent(path: str | Path) -> None:
 
 
 def load_images(pattern: str) -> list[Path]:
-    paths = sorted(Path().glob(pattern))
+    paths = sorted(path for path in Path().glob(pattern) if path.is_file() and not path.name.startswith("."))
     if not paths:
         raise FileNotFoundError(f"No images matched pattern: {pattern}")
     return paths
+
+
+def read_image(path: str | Path) -> np.ndarray | None:
+    path = Path(path)
+    image = cv2.imread(str(path))
+    if image is not None:
+        return image
+
+    suffix = path.suffix.lower()
+    if suffix not in {".heic", ".heif"}:
+        return None
+    if register_heif_opener is None:
+        raise RuntimeError(
+            "HEIC/HEIF support requires the optional dependency 'pillow-heif'. "
+            "Install packages from python/calibration/requirements.txt."
+        )
+
+    try:
+        with Image.open(path) as pil_image:
+            rgb = pil_image.convert("RGB")
+            array = np.array(rgb)
+        return cv2.cvtColor(array, cv2.COLOR_RGB2BGR)
+    except Exception:
+        return None
 
 
 def create_charuco_board(spec: BoardSpec):

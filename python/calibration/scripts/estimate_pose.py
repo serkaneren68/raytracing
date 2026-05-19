@@ -11,6 +11,7 @@ from common import (
     draw_pose_axes,
     ensure_parent,
     load_intrinsics,
+    read_image,
     save_json,
 )
 
@@ -75,9 +76,15 @@ def main() -> None:
 
     spec = BoardSpec(args.type, args.cols, args.rows, args.square_mm, args.marker_mm)
     _, camera_matrix, dist_coeffs = load_intrinsics(args.intrinsics)
-    image = cv2.imread(args.image)
+    try:
+        image = read_image(args.image)
+    except RuntimeError as e:
+        raise RuntimeError(f"{e} Failing image: {args.image}") from e
     if image is None:
-        raise FileNotFoundError(f"Could not read image: {args.image}")
+        raise FileNotFoundError(
+            f"Could not decode image: {args.image}. If this is a HEIC file, "
+            "install the Python dependencies from requirements.txt first."
+        )
 
     if args.type == "charuco":
         rvec, tvec, overlay = solve_charuco_pose(image, spec, camera_matrix, dist_coeffs)
